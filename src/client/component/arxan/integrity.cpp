@@ -69,57 +69,7 @@ namespace arxan::integrity
 			return std::abs(diff) < 0x1000;
 		}
 
-		// Pretty trashy, but working, heuristic to search the integrity handler context
-		bool is_handler_context(uint8_t* stack_frame, const uint32_t computed_checksum, const uint32_t frame_offset)
-		{
-			const auto* potential_context = reinterpret_cast<integrity_handler_context*>(stack_frame + frame_offset);
-			return is_on_stack(stack_frame, potential_context->computed_checksum)
-				&& *potential_context->computed_checksum == computed_checksum
-				&& is_in_texts(potential_context->original_checksum);
-		}
-
-		integrity_handler_context* search_handler_context(uint8_t* stack_frame, const uint32_t computed_checksum)
-		{
-			for (uint32_t frame_offset = 0; frame_offset < 0x90; frame_offset += 8)
-			{
-				if (is_handler_context(stack_frame, computed_checksum, frame_offset))
-				{
-					return reinterpret_cast<integrity_handler_context*>(stack_frame + frame_offset);
-				}
-			}
-
-			return nullptr;
-		}
-
-		uint32_t adjust_integrity_checksum(const uint64_t return_address, uint8_t* stack_frame,
-			const uint32_t current_checksum)
-		{
-			const auto handler_address = game::derelocate(return_address - 5);
-			const auto* context = search_handler_context(stack_frame, current_checksum);
-
-			if (!context)
-			{
-				MessageBoxA(nullptr, utils::string::va("No frame offset for: %llX", handler_address), "Error",
-					MB_ICONERROR);
-				TerminateProcess(GetCurrentProcess(), 0xBAD);
-				return current_checksum;
-			}
-
-			const auto correct_checksum = *context->original_checksum;
-			*context->computed_checksum = correct_checksum;
-
-#ifdef ARXAN_DEBUG
-			if (current_checksum != correct_checksum)
-			{
-				OutputDebugStringA(utils::string::va("Adjusting checksum (%llX): %X -> %X\n", handler_address,
-					current_checksum, correct_checksum));
-			}
-#endif
-
-			return correct_checksum;
-		}
-
-		bool is_handler_context_big(uint8_t* stack_frame, const uint32_t computed_checksum, const uint32_t frame_offset, const uint32_t index)
+		bool is_handler_context(uint8_t* stack_frame, const uint32_t computed_checksum, const uint32_t frame_offset, const uint32_t index)
 		{
 			const auto* potential_context = reinterpret_cast<integrity_handler_context*>(stack_frame + frame_offset);
 
@@ -128,11 +78,11 @@ namespace arxan::integrity
 				&& is_in_texts(&potential_context->original_checksum[index]);
 		}
 
-		integrity_handler_context* search_handler_context_big(uint8_t* stack_frame, const uint32_t computed_checksum, const uint32_t index)
+		integrity_handler_context* search_handler_context(uint8_t* stack_frame, const uint32_t computed_checksum, const uint32_t index)
 		{
 			for (uint32_t frame_offset = 0; frame_offset < 0x140; frame_offset += 8)
 			{
-				if (is_handler_context_big(stack_frame, computed_checksum, frame_offset, index))
+				if (is_handler_context(stack_frame, computed_checksum, frame_offset, index))
 				{
 					return reinterpret_cast<integrity_handler_context*>(stack_frame + frame_offset);
 				}
@@ -141,10 +91,10 @@ namespace arxan::integrity
 			return nullptr;
 		}
 
-		uint32_t adjust_big_integrity_checksum(const uint64_t return_address, uint8_t* stack_frame, const uint32_t current_checksum, const uint32_t index)
+		uint32_t adjust_integrity_checksum(const uint64_t return_address, uint8_t* stack_frame, const uint32_t current_checksum, const uint32_t index)
 		{
 			const auto handler_address = game::derelocate(return_address - 5);
-			const auto* context = search_handler_context_big(stack_frame, current_checksum, index);
+			const auto* context = search_handler_context(stack_frame, current_checksum, index);
 
 			if (!context)
 			{
@@ -156,14 +106,6 @@ namespace arxan::integrity
 
 			const auto correct_checksum = context->original_checksum[index];
 			context->computed_checksum[index] = correct_checksum;
-
-			/*
-			// Probably not needed
-			if (index == 4)
-			{
-				uint32_t reversed = _byteswap_ulong(correct_checksum);
-				utils::hook::set<uint32_t>(stack_frame + 0x10, reversed);
-			}*/
 
 #ifdef ARXAN_DEBUG
 			if (current_checksum != correct_checksum)
@@ -203,6 +145,7 @@ namespace arxan::integrity
 				a.mov(r8, qword_ptr(rsp, 0x80));
 				a.mov(rcx, rax);
 				a.mov(rdx, rbp);
+				a.mov(r9d, 0); // value at rbp+offset -> checksum array offset always start with 0 for basic blocks
 				a.call_aligned(adjust_integrity_checksum);
 
 				a.mov(qword_ptr(rsp, 0x78), rax);
@@ -258,7 +201,7 @@ namespace arxan::integrity
 				a.mov(rdx, rbp);
 				a.mov(r9, qword_ptr(rsp, 0x90));        // other_frame_offset
 				a.mov(r9d, dword_ptr(rbp, r9));         // value at rbp+offset -> checksum array offset
-				a.call_aligned(adjust_big_integrity_checksum);
+				a.call_aligned(adjust_integrity_checksum);
 
 				a.mov(qword_ptr(rsp, 0x78), rax);
 
@@ -337,6 +280,7 @@ namespace arxan::integrity
 				a.mov(r8, qword_ptr(rsp, 0x80));
 				a.mov(rcx, rax);
 				a.mov(rdx, rbp);
+				a.mov(r9d, 0); // value at rbp+offset -> checksum array offset always start with 0 for basic blocks
 				a.call_aligned(adjust_integrity_checksum);
 
 				a.mov(qword_ptr(rsp, 0x78), rax);
@@ -382,7 +326,7 @@ namespace arxan::integrity
 				a.mov(rdx, rbp);
 				a.mov(r9, other_frame_offset);          // other_frame_offset
 				a.mov(r9d, dword_ptr(rbp, r9));         // value at rbp+offset -> checksum array offset
-				a.call_aligned(adjust_big_integrity_checksum);
+				a.call_aligned(adjust_integrity_checksum);
 
 				a.mov(qword_ptr(rsp, 0x78), rax);
 
@@ -441,8 +385,6 @@ namespace arxan::integrity
 				{
 					patch_big_split_basic_block_integrity_check(reinterpret_cast<void*>(game::relocate(offset)));
 				}
-
-				utils::hook::set<uint64_t>(0x7B4787_g, 0x2B);
 			}	
 		}
 

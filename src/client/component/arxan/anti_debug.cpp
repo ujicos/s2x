@@ -236,10 +236,14 @@ namespace arxan::anti_debug
 		bool remove_evil_keywords_from_string(wchar_t* str, const size_t length)
 		{
 			if (!str || length == 0)
+			{
 				return false;
-
+			}
+				
 			if (length > (std::numeric_limits<uint16_t>::max() / sizeof(wchar_t)))
+			{
 				return false;
+			}
 
 			UNICODE_STRING unicode_string{};
 			unicode_string.Buffer = str;
@@ -496,12 +500,9 @@ namespace arxan::anti_debug
 
 		LPVOID WINAPI virtual_alloc_stub(LPVOID address, SIZE_T size, DWORD allocation_type, DWORD protect)
 		{
-			if (!(allocation_type & MEM_COMMIT))
-			{
-				return virtual_alloc_hook.invoke<LPVOID>(address, size, allocation_type, protect);
-			}
-
-			if (protect == PAGE_EXECUTE_READWRITE && size > 0x100000 && size < 0x180000)
+			if ((allocation_type & MEM_COMMIT) &&
+				protect == PAGE_EXECUTE_READWRITE &&
+				size > 0x100000 && size < 0x180000)
 			{
 #ifdef ARXAN_DEBUG
 				OutputDebugStringA("[VirtualAlloc] Intercepted NTDLL copy allocation - returning original mapping\n");
@@ -520,7 +521,7 @@ namespace arxan::anti_debug
 				}
 
 				const utils::nt::library ntdll("ntdll.dll");
-				return static_cast<std::uint8_t*>(ntdll.get_ptr() + 0x1000);
+				return static_cast<std::uint8_t*>(ntdll.get_ptr()) + 0x1000;
 			}
 
 			return virtual_alloc_hook.invoke<LPVOID>(address, size, allocation_type, protect);
