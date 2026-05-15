@@ -68,6 +68,43 @@ namespace arxan::code_healing
 				: sp_patches;
 		}
 
+		struct patch_region
+		{
+			patch_list offsets;
+			uint64_t size;
+		};
+
+		const std::array<patch_region, 9>& current_regions()
+		{
+			static const std::array<patch_region, 9> mp_regions
+			{
+				patch_region{mp::big_intact_integrity_offsets, 0xA},
+				patch_region{mp::big_split_integrity_offsets, 0x5},
+				patch_region{mp::intact_integrity_offsets, 0x7},
+				patch_region{mp::split_integrity_offsets, 0x5},
+				patch_region{mp::al_healing_offsets, 0x6},
+				patch_region{mp::al_increment_healing_offsets, 0x6},
+				patch_region{mp::eax_healing_offsets, 0x5},
+				patch_region{mp::eax_split_healing_offsets, 0x5},
+				patch_region{mp::int2d_breakpoint_offsets, 0x7},
+			};
+
+			static const std::array<patch_region, 9> sp_regions
+			{
+				patch_region{sp::big_intact_integrity_offsets, 0xA},
+				patch_region{sp::big_split_integrity_offsets, 0x5},
+				patch_region{sp::intact_integrity_offsets, 0x7},
+				patch_region{empty_offsets, 0x5},
+				patch_region{sp::al_healing_offsets, 0x6},
+				patch_region{sp::al_increment_healing_offsets, 0x6},
+				patch_region{sp::eax_healing_offsets, 0x5},
+				patch_region{sp::eax_split_healing_offsets, 0x5},
+				patch_region{sp::int2d_breakpoint_offsets, 0x7},
+			};
+
+			return game::environment::is_mp() ? mp_regions : sp_regions;
+		}
+
 		void* find_lea_target(void* start)
 		{
 			uint8_t* p = static_cast<uint8_t*>(start);
@@ -96,12 +133,6 @@ namespace arxan::code_healing
 			return nullptr;
 		}
 
-		struct patch_region
-		{
-			patch_list offsets;
-			uint64_t size;
-		};
-
 		bool overlaps_region(const uint64_t heal_start, const uint64_t heal_end, const patch_region& region)
 		{
 			for (const auto patched_address : region.offsets)
@@ -124,22 +155,7 @@ namespace arxan::code_healing
 			const auto heal_start = reinterpret_cast<uint64_t>(heal_location);
 			const auto heal_end = heal_start + patch_length;
 
-			const auto& patches = current_patches();
-
-			const std::array regions
-			{
-				patch_region{patches.big_intact_integrity, 0xA},
-				patch_region{patches.big_split_integrity, 0x5},
-				patch_region{patches.intact_integrity, 0x7},
-				patch_region{patches.split_integrity, 0x5},
-				patch_region{patches.al_healing, 0x6},
-				patch_region{patches.al_increment_healing, 0x6},
-				patch_region{patches.eax_healing, 0x5},
-				patch_region{patches.eax_split_healing, 0x5},
-				patch_region{patches.int2d_breakpoint, 0x7},
-			};
-
-			for (const auto& region : regions)
+			for (const auto& region : current_regions())
 			{
 				if (overlaps_region(heal_start, heal_end, region))
 				{
