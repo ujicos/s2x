@@ -144,7 +144,7 @@ namespace console
 	{
 		if (type == console::print_type_demonware)
 		{
-			static bool has_demonware_debug = utils::flags::has_flag("demonware_debug");
+			static bool has_demonware_debug = utils::flags::has_flag("-demonware_debug");
 			if (!has_demonware_debug)
 			{
 				return;
