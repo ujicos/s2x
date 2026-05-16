@@ -27,7 +27,6 @@ namespace arxan::code_healing
 			patch_list split_integrity;
 			patch_list big_split_integrity;
 			patch_list al_healing;
-			patch_list al_increment_healing;
 			patch_list eax_healing;
 			patch_list eax_split_healing;
 			patch_list int2d_breakpoint;
@@ -42,7 +41,6 @@ namespace arxan::code_healing
 			mp::split_integrity_offsets,
 			mp::big_split_integrity_offsets,
 			mp::al_healing_offsets,
-			mp::al_increment_healing_offsets,
 			mp::eax_healing_offsets,
 			mp::eax_split_healing_offsets,
 			mp::int2d_breakpoint_offsets,
@@ -55,7 +53,6 @@ namespace arxan::code_healing
 			empty_offsets,
 			sp::big_split_integrity_offsets,
 			sp::al_healing_offsets,
-			sp::al_increment_healing_offsets,
 			sp::eax_healing_offsets,
 			sp::eax_split_healing_offsets,
 			sp::int2d_breakpoint_offsets,
@@ -83,7 +80,6 @@ namespace arxan::code_healing
 				patch_region{mp::intact_integrity_offsets, 0x7},
 				patch_region{mp::split_integrity_offsets, 0x5},
 				patch_region{mp::al_healing_offsets, 0x6},
-				patch_region{mp::al_increment_healing_offsets, 0x6},
 				patch_region{mp::eax_healing_offsets, 0x5},
 				patch_region{mp::eax_split_healing_offsets, 0x5},
 				patch_region{mp::int2d_breakpoint_offsets, 0x7},
@@ -96,7 +92,6 @@ namespace arxan::code_healing
 				patch_region{sp::intact_integrity_offsets, 0x7},
 				patch_region{empty_offsets, 0x5},
 				patch_region{sp::al_healing_offsets, 0x6},
-				patch_region{sp::al_increment_healing_offsets, 0x6},
 				patch_region{sp::eax_healing_offsets, 0x5},
 				patch_region{sp::eax_split_healing_offsets, 0x5},
 				patch_region{sp::int2d_breakpoint_offsets, 0x7},
@@ -208,45 +203,6 @@ namespace arxan::code_healing
 			utils::hook::call(game_address, stub);
 		}
 
-		void patch_healing_code_sections_function_al_increment(void* address)
-		{
-			const auto game_address = reinterpret_cast<uint64_t>(address);
-
-			static const auto stub = utils::hook::assemble([](utils::hook::assembler& a)
-			{
-				a.pushad64();
-
-				const auto skip_update = a.new_label();
-
-				a.mov(rcx, rdx); // rdx = destination pointer
-				a.mov(edx, 1); // length = 1 byte (size of al)
-				a.call_aligned(allow_code_healing);
-
-				a.test(al, al);
-				a.jz(skip_update);
-
-				a.popad64();
-
-				// Original instructions we overwrite:
-				// mov [rdx], al
-				// add dword ptr [rbp+10h], 1
-				a.mov(byte_ptr(rdx), al);
-				a.add(dword_ptr(rbp, 0x10), 1);
-				a.ret();
-
-				a.bind(skip_update);
-				a.popad64();
-
-				// Skip overwrite but increase counter
-				a.add(dword_ptr(rbp, 0x10), 1);
-				a.ret();
-			});
-
-			// total 6 bytes. call = 5 bytes, so nop 1 extra.
-			utils::hook::nop(game_address, 6);
-			utils::hook::call(game_address, stub);
-		}
-
 		void patch_healing_code_sections_function_eax(void* address)
 		{
 			const auto game_address = reinterpret_cast<uint64_t>(address);
@@ -334,12 +290,6 @@ namespace arxan::code_healing
 		{
 			const auto& patches = current_patches();
 
-			// This needs to be patched first as it could heal other heal patches
-			for (const auto offset : patches.al_increment_healing)
-			{
-				patch_healing_code_sections_function_al_increment(reinterpret_cast<void*>(game::relocate(offset)));
-			}
-
 			for (const auto offset : patches.al_healing)
 			{
 				patch_healing_code_sections_function_al(reinterpret_cast<void*>(game::relocate(offset)));
@@ -358,13 +308,6 @@ namespace arxan::code_healing
 
 		void search_and_patch_code_healing()
 		{
-			// This needs to be patched first as it could heal other heal patches
-			const auto al_increment_healing_results = "88 02 83 45 10 01"_sig;
-			for (auto* i : al_increment_healing_results)
-			{
-				patch_healing_code_sections_function_al_increment(i);
-			}
-
 			const auto al_healing_results = "88 02 83 45 20 FF"_sig;
 			for (auto* i : al_healing_results)
 			{

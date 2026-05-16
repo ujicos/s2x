@@ -158,12 +158,6 @@ namespace mp
 		0x120239F3,
 		0x12025B58,
 	};
-	
-	// 88 02 83 45 10 01
-	constexpr uint64_t al_increment_healing_offsets[] =
-	{
-		0x11C5081B
-	};
 
 	// 89 02 8B 45 20
 	constexpr uint64_t eax_healing_offsets[] =
@@ -416,12 +410,6 @@ namespace sp
 		0xF51429F,
 		0xF517B5B,
 		0xF530A6B,
-	};
-
-	// 88 02 83 45 10 01
-	constexpr uint64_t al_increment_healing_offsets[] =
-	{
-		0xF04F5CA
 	};
 
 	// 89 02 8B 45 20
