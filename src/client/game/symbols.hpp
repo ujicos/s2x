@@ -78,9 +78,18 @@ namespace game
 
 	WEAK symbol<const ScreenPlacement* (const LocalClientNum_t localClientNum)> ScrPlace_GetViewPlacement{ 0x4A01B0, 0x272660 };
 
-	WEAK symbol<CmdArgs> sv_cmd_args{ 0xAA763C0 };
+	WEAK symbol<void (const char* text_in)> SV_Cmd_TokenizeString{ 0x64C070, 0x4665A0 };
+	WEAK symbol<void (const char* text_in)> Cmd_TokenizeString{ 0x64B970, 0x465EA0 };
+	WEAK symbol<void ()> SV_Cmd_EndTokenizedString{ 0x64C030, 0x466560 };
+	WEAK symbol<void ()> Cmd_EndTokenizedString{ 0x64AA00, 0x465410 };
+	WEAK symbol<void (const char* cmdName, void(__fastcall* function)(), cmd_function_s* allocedCmd)> Cmd_AddCommandInternal{ 0x64A6B0, 0x465150 };
+	WEAK symbol<void(const char* cmdName, void(__fastcall* function)(), cmd_function_s* allocedCmd)> Cmd_AddServerCommandInternal{ 0x64A720, 0x4651C0 };
+
+	WEAK symbol<void()> Cbuf_AddServerText_f{ 0x64A1A0, 0x464E60 };
+
+	WEAK symbol<CmdArgs> sv_cmd_args{ 0xAA763C0, 0x97D7CB0 };
+	WEAK symbol<CmdArgs> cmd_args{ 0xAA762D0, 0x97D7BC0 };
 	WEAK symbol<cmd_function_s*> sv_cmd_functions{ 0xAA763B8, 0x97D7DA8 };
-	WEAK symbol<CmdArgs> cmd_args{ 0xAA762D0, 0x97D7CB0 };
 	WEAK symbol<cmd_function_s*> cmd_functions{ 0xAA762C8, 0x97D7CA8 };
 	WEAK symbol<CmdText> cmd_textArray{ 0xAA764A8, 0x97D7D98 };
 	WEAK symbol<const char*> command_whitelist{ 0xF91FC0, 0xAD7650 };
@@ -92,4 +101,6 @@ namespace game
 
 	WEAK symbol<int> keyCatchers{ 0x1BAF4E0, 0x3425600 };
 	WEAK symbol<PlayerKeyState> playerKeys{ 0x8B90F4C, 0x3421FCC };
+
+	constexpr auto CMD_MAX_NESTING = 8;
 }

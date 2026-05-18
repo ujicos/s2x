@@ -359,6 +359,62 @@ namespace game
 		void(__cdecl* function)();
 	};
 
+	namespace sp
+	{
+		struct playerState_s
+		{
+			// ... incomplete
+		};
+
+		struct gclient_s
+		{
+			char __pad0[0xF24C];
+			int autoMantle;                    // 0xF24C
+			int sprintCancel;                  // 0xF250
+
+			// ... incomplete
+		};
+
+		struct gentity_s
+		{
+			char __pad0[0x1C0];
+			gclient_s* client;                 // 0x1C0
+			char __pad1C8[0x400 - 0x1C8];
+		};
+		static_assert(sizeof(gentity_s) == 0x400);
+		static_assert(offsetof(gentity_s, client) == 0x1C0);
+		static_assert(offsetof(gclient_s, autoMantle) == 0xF24C);
+		static_assert(offsetof(gclient_s, sprintCancel) == 0xF250);
+	}
+
+	namespace mp
+	{
+		struct playerState_s
+		{
+			char clientNum;
+			bool cursorHintDualWield;
+			uint8_t pm_type;
+
+			// ... incomplete
+		};
+
+		struct gclient_s
+		{
+			playerState_s ps;
+
+			// ... incomplete
+		};
+
+		struct gentity_s
+		{
+			char __pad0[0x258];
+			gclient_s* client;                 // 0x0258
+			char __pad260[0x418 - 0x260];
+		};
+		static_assert(sizeof(gentity_s) == 0x418);
+		static_assert(offsetof(gentity_s, client) == 0x258);
+	}
+
 #ifdef __cplusplus
 }
 #endif
