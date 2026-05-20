@@ -177,7 +177,7 @@ namespace scheduler
 			r_end_frame_hook.create(game::select(0x8BBCD0, 0x63A970), r_end_frame_stub);
 
 			// Some random function in Com_Frame I suppose
-			main_frame_hook.create(game::select(0x78AAE0, 0x46FEC0), main_frame_stub);
+			main_frame_hook.create(game::select(0x92390, 0x46FEC0), main_frame_stub);
 
 			//utils::hook::call(0x1421F8DBE_g, g_clear_vehicle_inputs_stub);
 		}
