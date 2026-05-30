@@ -359,6 +359,36 @@ namespace game
 		void(__cdecl* function)();
 	};
 
+	enum DBSyncMode
+	{
+		DB_LOAD_ASYNC = 0x0,
+		DB_LOAD_SYNC = 0x1,
+		DB_LOAD_ASYNC_WAIT_ALLOC = 0x2,
+		DB_LOAD_ASYNC_FORCE_FREE = 0x3,
+		DB_LOAD_ASYNC_NO_SYNC_THREADS = 0x4,
+	};
+
+	struct XZoneInfo
+	{
+		const char* name;
+		int allocFlags;
+		int freeFlags;
+	};
+
+	struct StringTableCell
+	{
+		const char* string;
+		int hash;
+	};
+
+	struct StringTable
+	{
+		const char* name;
+		int columnCount;
+		int rowCount;
+		StringTableCell* values;
+	};
+
 	namespace sp
 	{
 		struct playerState_s
@@ -385,6 +415,17 @@ namespace game
 		static_assert(offsetof(gentity_s, client) == 0x1C0);
 		static_assert(offsetof(gclient_s, autoMantle) == 0xF24C);
 		static_assert(offsetof(gclient_s, sprintCancel) == 0xF250);
+
+		struct XZone
+		{
+			char __pad0[0x328];
+			char name[0x40];     // 0x328
+			int flags;           // 0x368
+			char __pad1[0x12C];
+		};
+		static_assert(offsetof(XZone, name) == 0x328);
+		static_assert(offsetof(XZone, flags) == 0x368);
+		static_assert(sizeof(XZone) == 0x498);
 	}
 
 	namespace mp
@@ -413,8 +454,18 @@ namespace game
 		};
 		static_assert(sizeof(gentity_s) == 0x418);
 		static_assert(offsetof(gentity_s, client) == 0x258);
-	}
 
+		struct XZone
+		{
+			char __pad0[0x340];
+			char name[0x40];     // 0x340
+			int flags;           // 0x380
+			char __pad1[0x22C];
+		};
+		static_assert(offsetof(XZone, name) == 0x340);
+		static_assert(offsetof(XZone, flags) == 0x380);
+		static_assert(sizeof(XZone) == 0x5B0);
+	}
 #ifdef __cplusplus
 }
 #endif
