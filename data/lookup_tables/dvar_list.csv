@@ -11,3 +11,5 @@ g_hardcore,2043
 onlinegame,2291
 cl_motdString,3680
 com_completionResolveCommand,5369
+cl_paused,183
+sv_paused,5351
