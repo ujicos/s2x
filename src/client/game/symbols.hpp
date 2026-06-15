@@ -106,6 +106,8 @@ namespace game
 	WEAK symbol<void(int localClientNum, void* sessionInfo, netadr_s* to, const char* mapname, const char* gametype)> CL_ConnectAndPreloadMap{ 0x6CCA0 };
 	WEAK symbol<void()> CL_Connect{ 0x6D0A0 };
 
+	WEAK symbol<void(uint16_t ent, const char* menu)> CG_RegisterHubVendorTarget{ 0x2ED20 };
+
 	WEAK symbol<void(int localClientNum, const char** args)> UI_RunMenuScript{ 0x746A50 };
 	WEAK symbol<int(const char* mapName)> UI_GetListIndexFromMapName{ 0x650510 };
 	WEAK symbol<void(const char* mapname, const char* gametype)> UI_SetMap{ 0x74A050 };
