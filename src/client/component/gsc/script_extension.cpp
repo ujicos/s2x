@@ -2,6 +2,7 @@
 #include "loader/component_loader.hpp"
 #include "game/game.hpp"
 #include "game/dvars.hpp"
+#include "game/lookup/errors.hpp"
 
 #include "game/scripting/functions.hpp"
 
@@ -11,7 +12,6 @@
 #include "script_error.hpp"
 #include "script_extension.hpp"
 #include "script_loading.hpp"
-#include "script_error_translations.hpp"
 
 #include <utils/hook.hpp>
 #include <utils/string.hpp>
@@ -223,7 +223,7 @@ namespace gsc
 
 		void scr_error_stub(const char* fmt, ...)
 		{
-			const auto translated = translate_scr_error_format(fmt);
+			const auto translated = game::lookup::errors::translate_format(fmt);
 			char buffer[0x400]{};
 
 			va_list args;
@@ -243,7 +243,7 @@ namespace gsc
 
 		void* scr_error2_stub(int param_index, const char* fmt, ...)
 		{
-			const auto translated = translate_scr_error_format(fmt);
+			const auto translated = game::lookup::errors::translate_format(fmt);
 			char buffer[0x400]{};
 
 			va_list args;

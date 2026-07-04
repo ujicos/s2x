@@ -5,10 +5,10 @@
 #include "console/console.hpp"
 #include "scheduler.hpp"
 #include "command.hpp"
-#include "dvars.hpp"
 
 #include "game/game.hpp"
 #include "game/dvars.hpp"
+#include "game/lookup/dvars.hpp"
 
 #include <utils/string.hpp>
 #include <utils/hook.hpp>
@@ -229,7 +229,7 @@ namespace game_console
 				if (&game::dvarPool[i])
 				{
 					const auto* dvar = &game::dvarPool[i];
-					std::string name = dvar->name ? dvars::get_dvar_display_name(dvar->name) : "";
+					std::string name = dvar->name ? std::string(game::lookup::dvars::resolve_display_name(dvar->name)) : "";
 
 					if (!name.empty())
 					{
