@@ -9,6 +9,7 @@
 #include "game/dvars.hpp"
 #include "game/ui_scripting/execution.hpp"
 
+#include "filesystem.hpp"
 #include "ui_scripting.hpp"
 
 #include <utils/hook.hpp>
@@ -188,8 +189,19 @@ namespace ui_scripting
 			lua["table"]["unpack"] = lua["unpack"];
 			lua["luiglobals"] = lua;
 
-			load_scripts((game::get_appdata_path() / "data/ui_scripts/").string());
-			load_scripts("s2x/ui_scripts/");
+			for (const auto& path : filesystem::get_search_paths_rev())
+			{
+				load_scripts((std::filesystem::path(path) / "ui_scripts").string());
+
+				if (game::environment::is_sp())
+				{
+					load_scripts((std::filesystem::path(path) / "ui_scripts/sp").string());
+				}
+				else
+				{
+					load_scripts((std::filesystem::path(path) / "ui_scripts/mp").string());
+				}
+			}
 		}
 
 		void try_start()
