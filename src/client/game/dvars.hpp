@@ -16,6 +16,9 @@ namespace dvars
 
 	extern game::dvar_t* db_verboseLogging;
 
+	extern game::dvar_t* com_developer;
+	extern game::dvar_t* com_developer_script;
+
 	std::string dvar_get_domain(const game::DvarType type, const game::DvarLimits& domain);
 	std::string dvar_get_vector_domain(const int components, const game::DvarLimits& domain);
 }

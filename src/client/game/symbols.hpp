@@ -98,6 +98,10 @@ namespace game
 	WEAK symbol<void(uint16_t* zoneIndices, unsigned int zoneCount, bool createDefault)> DB_UnloadXZones{ 0xADE50, 0x2B05D0 };
 	WEAK symbol<XAssetHeader(XAssetType type, const char* name, int allowCreateDefault)> DB_FindXAssetHeader{ 0xA1080, 0x2AB340 };
 	WEAK symbol<void()> DB_SyncXAsset{ 0xACA60 };
+	WEAK symbol<int(XAssetType type, const char* name)> DB_XAssetExists{ 0xAE400, 0x2B0870 };
+	WEAK symbol<int(XAssetType type, const char* name)> DB_IsXAssetDefault{ 0xA3C90, 0x2ACEB0 };
+	WEAK symbol<int(const RawFile* rawfile)> DB_GetRawFileLen{ 0xA27C0, 0x2AC1D0 };
+	WEAK symbol<void(const RawFile* rawfile, char* buf, int size)> DB_GetRawBuffer{ 0xA2650, 0x2AC060 };
 
 	WEAK symbol<void(const char* mapName, const char* gameType)> CL_PreloadMap{ 0x83950 };
 	WEAK symbol<void(const char* mapName)> CL_PreloadMap2{ 0x837E0 };
@@ -113,7 +117,7 @@ namespace game
 	WEAK symbol<void(const char* mapname, const char* gametype)> UI_SetMap{ 0x74A050 };
 	WEAK symbol<void(int localClientNum)> UI_Map{ 0x744C30 };
 
-	WEAK symbol<std::uint16_t(char* dst, const char* src, int length)> Sys_ChecksumCopy{ 0x75FB80 };
+	WEAK symbol<uint16_t(char* dst, const char* src, int length)> Sys_ChecksumCopy{ 0x75FB80 };
 	WEAK symbol<int(netsrc_t sock, int length, const void* data, const netadr_s* to)> Sys_SendPacket{ 0x7B0F50 };
 	WEAK symbol<int(netsrc_t sock, int length, const void* data, const netadr_s* to)> NET_SendPacket{ 0x66E290 };
 	WEAK symbol<int(const netadr_s* a, const netadr_s* b)> NET_CompareAdr{ 0x66DAE0 };
@@ -129,8 +133,66 @@ namespace game
 	WEAK symbol<bool()> BG_BotSystemEnabled{ 0x388180 };
 	WEAK symbol<bool(void* unk)> BG_AgentSystemEnabled{ 0x387BC0 };
 	WEAK symbol<bool()> BG_BotsUsingTeamDifficulty{ 0x388310 };
+	WEAK symbol<uint64_t()> BG_NetDataChecksum{ 0x38BD70 };
 
-	WEAK symbol<std::uint64_t()> BG_NetDataChecksum{ 0x38BD70 };
+	WEAK symbol<unsigned int()> Scr_AllocArray{ 0x68BC40, 0x492480 };
+	WEAK symbol<const float*(const float* v)> Scr_AllocVector{ 0x68BDB0, 0x492590 };
+	WEAK symbol<const char*(unsigned int index)> Scr_GetString{ 0x690C00, 0x497470 };
+	WEAK symbol<void(const char* value)> Scr_AddString{ 0x68FC30, 0x496360 };
+	WEAK symbol<void(int value)> Scr_AddInt{ 0x68FB50, 0x496280 };
+	WEAK symbol<scr_string_t(unsigned int index)> Scr_GetConstString{ 0x690640, 0x496E40 };
+	WEAK symbol<int(unsigned int index)> Scr_GetInt{ 0x690970, 0x4971E0 };
+	WEAK symbol<float(unsigned int index)> Scr_GetFloat{ 0x690880, 0x497080 };
+	WEAK symbol<void(unsigned int index, float* vectorValue)> Scr_GetVector{ 0x690DE0, 0x497650 };
+	WEAK symbol<unsigned int()> Scr_GetNumParam{ 0x6909E0, 0x497250 };
+	WEAK symbol<void()> Scr_ClearOutParams{ 0x690090, 0x4967C0 };
+	WEAK symbol<scr_entref_t(unsigned int entId)> Scr_GetEntityIdRef{ 0x68E560, 0x494CA0 };
+	WEAK symbol<int(unsigned int classnum, int entnum, int offset)> Scr_SetObjectField{ 0x5BA910, 0x3C9990 };
+	WEAK symbol<void(void* ent, unsigned int stringValue, unsigned int paramcount)> Scr_Notify{ 0x5B9D90, 0x3C9770 };
+	WEAK symbol<void(unsigned int id, unsigned int stringValue, unsigned int paramcount)> Scr_NotifyId{ 0x691490, 0x497D40 };
+	WEAK symbol<bool(VariableValue* value)> Scr_CastString{ 0x68C050, 0x492830 };
+	WEAK symbol<int(unsigned int index)> Scr_GetType{ 0x690D10, 0x497580 };
+	WEAK symbol<const char*(unsigned int index)> Scr_GetTypeName{ 0x690D50, 0x4975C0 };
+	WEAK symbol<int(unsigned int index)> Scr_GetPointerType{ 0x690B90, 0x497400 };
+	WEAK symbol<unsigned int(unsigned int index)> Scr_GetObject{ 0x6909F0, 0x497260 };
+	WEAK symbol<const char*(unsigned int index)> Scr_GetConstIString{ 0x690900, 0x497170 };
+	WEAK symbol<void(int parmIndex, const char* token, int tokenLen)> Scr_ValidateLocalizedStringRef{ 0x5A04E0, 0x3B3CB0 };
+	WEAK symbol<uint16_t(int handle, unsigned int paramcount)> Scr_ExecThread{ 0x6901F0, 0x496930 };
+	WEAK symbol<void(scr_string_t filename, unsigned int threadName, char* codePos)> Scr_EmitFunction{ 0x684DC0, 0x48B5E0 };
+	WEAK symbol<unsigned int(const char* name)> Scr_LoadScript{ 0x685B10, 0x48C310 };
+	WEAK symbol<unsigned int(const char* filename, unsigned int name)> Scr_GetFunctionHandle{ 0x6859A0, 0x48C1A0 };
+	WEAK symbol<unsigned int(const char** pName, int* type)> Scr_GetFunction{ 0x684F70, 0x48B790 };
+	WEAK symbol<void()> Scr_ErrorInternal{ 0x690150, 0x496890 };
+	WEAK symbol<void()> Scr_LoadLevel{ 0x5AF770, 0x3B2250 };
+	WEAK symbol<void(unsigned int threadName, const char* codePos)> Scr_SetThreadPosition{ 0x685380, 0x48BBD0 };
+	WEAK symbol<void(const char* fmt, ...)> Scr_Error{ 0x6900F0, 0x496830 };
+	WEAK symbol<void(int paramIndex, const char* fmt, ...)> Scr_Error2{ 0x691660, 0x497F10 };
+
+	WEAK symbol<void()> GScr_LoadConsts{ 0x5CE110, 0x3E7E50 };
+	WEAK symbol<unsigned int(unsigned int parentId, unsigned int name)> FindVariable{ 0x68A950, 0x4910C0 };
+	WEAK symbol<unsigned int(int entnum, unsigned int classnum)> FindEntityId{ 0x68A870, 0x490FE0 };
+	WEAK symbol<scr_string_t(unsigned int parentId, unsigned int id)> GetVariableName{ 0x68B270, 0x4919E0 };
+	WEAK symbol<void(VariableValue* result, unsigned int classnum, int entnum, int offset)> GetEntityFieldValue{ 0x68F150, 0x495870 };
+	WEAK symbol<unsigned int(unsigned int)> GetObjectType{ 0x68B080, 0x4917F0 };
+	WEAK symbol<unsigned int(unsigned int, unsigned int)> GetVariable{ 0x68B180, 0x4918F0 };
+	WEAK symbol<void(unsigned int id)> RemoveRefToObject{ 0x68B3C0, 0x491B30 };
+	WEAK symbol<void(uint64_t markPos)> LargeLocalResetToMark{ 0x287590, 0xEBD70 };
+	WEAK symbol<void(const char* filename)> ProcessScript{ 0x68F1B0, 0x4958D0 };
+
+	WEAK symbol<unsigned int(unsigned int localId, const char* pos, unsigned int paramcount)> VM_Execute{ 0x6922A0, 0x498B50 };
+	
+	WEAK symbol<const char*(scr_string_t stringValue)> SL_ConvertToString{ 0x688C90, 0x48F3D0 };
+	WEAK symbol<unsigned int(char const* str)> SL_GetCanonicalString{ 0x685510, 0x48BD60 };
+
+	WEAK symbol<void(errorParm_t code, const char* message, ...)> Com_Error{ 0x90750, 0x46F7C0 };
+
+	WEAK symbol<void*(unsigned int size, unsigned int alignment, int selector)> PMem_AllocFromSource_NoDebug{ 0x769910, 0x4D38D0 };
+	WEAK symbol<uint8_t*(uint32_t*)> PMem_GetScriptMemory{ 0x4D6740, 0x2A86F0 };
+
+	WEAK symbol<void(int clearScripts)> G_ShutdownGame{ 0x562920, 0x3768C0 };
+	
+	WEAK symbol<void*> g_scr_func_table{ 0xAC9BE40, 0x9D1E000 };
+	WEAK symbol<void*> g_scr_meth_table{ 0xAC9DC70, 0x9D1FE30 };
 
 	WEAK symbol<CmdArgs> sv_cmd_args{ 0xAA763C0, 0x97D7CB0 };
 	WEAK symbol<CmdArgs> cmd_args{ 0xAA762D0, 0x97D7BC0 };
@@ -158,6 +220,10 @@ namespace game
 	WEAK symbol<char> virtualLobby_Loaded{ 0x1BD36F8 };
 
 	WEAK symbol<SOCKET> ip_socket{ 0xD8B0540 };
+
+	WEAK symbol<scrVarGlob_t> scr_VarGlob{ 0xB2FBF80, 0xA37E180 };
+	WEAK symbol<scrVmPub_t> scr_VmPub{ 0xBB0E1C0, 0xAB903C0 };
+	WEAK symbol<function_stack_t> scr_function_stack{ 0xBB18F60, 0xAB9B160 };
 	
 	constexpr auto CMD_MAX_NESTING = 8;
 

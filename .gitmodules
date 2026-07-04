@@ -25,3 +25,6 @@
 [submodule "deps/udis86"]
 	path = deps/udis86
 	url = https://github.com/vmt/udis86.git
+[submodule "deps/gsc-tool"]
+	path = deps/gsc-tool
+	url = https://github.com/Brentdevent/gsc-tool

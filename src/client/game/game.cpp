@@ -234,6 +234,17 @@ namespace game
 		return systemlink && systemlink->current.enabled;
 	}
 
+	bool virtual_lobby_loaded()
+	{
+		if (game::environment::is_sp())
+		{
+			// function checks wether we're in the main menu or mission_select
+			return utils::hook::invoke<bool>(0x4B89B0_g);
+		}
+
+		return *game::virtualLobby_Loaded;
+	}
+
 	namespace hks
 	{
 		cclosure* cclosure_Create(lua_function func)

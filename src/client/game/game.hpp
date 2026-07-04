@@ -128,6 +128,8 @@ namespace game
 	bool is_server_running();
 	bool is_local_play();
 
+	bool virtual_lobby_loaded();
+
 	namespace hks
 	{
 		cclosure* cclosure_Create(lua_function func);
