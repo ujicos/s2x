@@ -138,8 +138,8 @@ namespace ui_scripting
 				std::string data{};
 				if (std::filesystem::is_directory(script) && utils::io::read_file(script / "__init__.lua", &data))
 				{
-					print_loading_script(script.string());
-					load_script((script / "__init__.lua").string(), data);
+					print_loading_script(script.generic_string());
+					load_script((script / "__init__.lua").generic_string(), data);
 				}
 			}
 		}
@@ -191,15 +191,15 @@ namespace ui_scripting
 
 			for (const auto& path : filesystem::get_search_paths_rev())
 			{
-				load_scripts((std::filesystem::path(path) / "ui_scripts").string());
+				load_scripts((std::filesystem::path(path) / "ui_scripts").generic_string());
 
 				if (game::environment::is_sp())
 				{
-					load_scripts((std::filesystem::path(path) / "ui_scripts/sp").string());
+					load_scripts((std::filesystem::path(path) / "ui_scripts/sp").generic_string());
 				}
 				else
 				{
-					load_scripts((std::filesystem::path(path) / "ui_scripts/mp").string());
+					load_scripts((std::filesystem::path(path) / "ui_scripts/mp").generic_string());
 				}
 			}
 		}
