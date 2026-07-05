@@ -12,7 +12,7 @@ namespace ui_scripting
 	{
 		script_value get_field(void* ptr, game::hks::HksObjectType type, const script_value& key)
 		{
-			const auto state = *game::hks::lua_state;
+			const auto state = *game::hks::lui_lua_state;
 			const auto top = state->m_apistack.top;
 
 			push_value(key);
@@ -29,7 +29,7 @@ namespace ui_scripting
 
 		void set_field(void* ptr, game::hks::HksObjectType type, const script_value& key, const script_value& value)
 		{
-			const auto state = *game::hks::lua_state;
+			const auto state = *game::hks::lui_lua_state;
 
 			game::hks::HksObject obj{};
 			obj.t = type;
@@ -41,27 +41,27 @@ namespace ui_scripting
 
 	void push_value(const script_value& value)
 	{
-		const auto state = *game::hks::lua_state;
+		const auto state = *game::hks::lui_lua_state;
 		*state->m_apistack.top = value.get_raw();
 		state->m_apistack.top++;
 	}
 
 	void push_value(const game::hks::HksObject& value)
 	{
-		const auto state = *game::hks::lua_state;
+		const auto state = *game::hks::lui_lua_state;
 		*state->m_apistack.top = value;
 		state->m_apistack.top++;
 	}
 
 	script_value get_return_value(int offset)
 	{
-		const auto state = *game::hks::lua_state;
+		const auto state = *game::hks::lui_lua_state;
 		return state->m_apistack.top[-1 - offset];
 	}
 
 	arguments get_return_values()
 	{
-		const auto state = *game::hks::lua_state;
+		const auto state = *game::hks::lui_lua_state;
 		const auto count = static_cast<int>(state->m_apistack.top - state->m_apistack.base);
 		arguments values;
 
@@ -81,7 +81,7 @@ namespace ui_scripting
 
 	arguments get_return_values(game::hks::HksObject* base)
 	{
-		const auto state = *game::hks::lua_state;
+		const auto state = *game::hks::lui_lua_state;
 		const auto count = static_cast<int>(state->m_apistack.top - base);
 		arguments values;
 
@@ -101,7 +101,7 @@ namespace ui_scripting
 
 	bool notify(const std::string& name, const event_arguments& arguments)
 	{
-		const auto state = *game::hks::lua_state;
+		const auto state = *game::hks::lui_lua_state;
 		if (state == nullptr)
 		{
 			return false;
@@ -138,7 +138,7 @@ namespace ui_scripting
 
 	arguments call_script_function(const function& function, const arguments& arguments)
 	{
-		const auto state = *game::hks::lua_state;
+		const auto state = *game::hks::lui_lua_state;
 		const auto top = state->m_apistack.top;
 
 		push_value(function);

@@ -251,7 +251,9 @@ namespace game
 
 	namespace hks
 	{
-		WEAK symbol<lua_State*> lua_state{ 0x1BD3D08, 0x2A39810 };
+		WEAK symbol<lua_State*> lui_lua_state{ 0x1BD3D08, 0x2A39810 };
+		WEAK symbol<lua_State*> clientscript_lua_state{ 0x6CA66B8, 0x1154638 };
+
 		WEAK symbol<void(lua_State* s, const char* str, int l)> hksi_lua_pushlstring{ 0x104620, 0x2B830 };
 		WEAK symbol<HksObject*(HksObject* result, lua_State* s, const HksObject* table, const HksObject* key)> hks_obj_getfield{ 0x2D8580, 0x192211 };
 		WEAK symbol<void(lua_State* s, const HksObject* tbl, const HksObject* key, const HksObject* val)> hks_obj_settable{ 0x2D96B0, 0x14DA70 };

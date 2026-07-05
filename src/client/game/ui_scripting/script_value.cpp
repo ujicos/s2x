@@ -58,11 +58,11 @@ namespace ui_scripting
 	{
 		this->value_ = value;
 
-		const auto state = *game::hks::lua_state;
+		const auto state = *game::hks::lui_lua_state;
 		const auto top = state->m_apistack.top;
 
 		push_value(this->value_);
-		this->ref_ = game::hks::hksi_luaL_ref(*game::hks::lua_state, -10000);
+		this->ref_ = game::hks::hksi_luaL_ref(*game::hks::lui_lua_state, -10000);
 		state->m_apistack.top = top;
 	}
 
@@ -70,7 +70,7 @@ namespace ui_scripting
 	{
 		if (this->ref_)
 		{
-			game::hks::hksi_luaL_unref(*game::hks::lua_state, -10000, this->ref_);
+			game::hks::hksi_luaL_unref(*game::hks::lui_lua_state, -10000, this->ref_);
 			this->value_.t = game::hks::TNONE;
 		}
 	}
@@ -147,7 +147,7 @@ namespace ui_scripting
 	{
 		game::hks::HksObject obj{};
 
-		const auto state = *game::hks::lua_state;
+		const auto state = *game::hks::lui_lua_state;
 		if (state == nullptr)
 		{
 			return;

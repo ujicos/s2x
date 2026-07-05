@@ -73,12 +73,12 @@ namespace ui_scripting
         value.v.ptr = this->ptr;
         value.t = game::hks::TUSERDATA;
 
-        const auto state = *game::hks::lua_state;
+        const auto state = *game::hks::lui_lua_state;
         const auto top = state->m_apistack.top;
 
         push_value(value);
 
-        this->ref = game::hks::hksi_luaL_ref(*game::hks::lua_state, -10000);
+        this->ref = game::hks::hksi_luaL_ref(*game::hks::lui_lua_state, -10000);
         state->m_apistack.top = top;
     }
 
@@ -86,7 +86,7 @@ namespace ui_scripting
     {
         if (this->ref)
         {
-            game::hks::hksi_luaL_unref(*game::hks::lua_state, -10000, this->ref);
+            game::hks::hksi_luaL_unref(*game::hks::lui_lua_state, -10000, this->ref);
         }
     }
 
@@ -129,7 +129,7 @@ namespace ui_scripting
 
     table::table()
     {
-        const auto state = *game::hks::lua_state;
+        const auto state = *game::hks::lui_lua_state;
         this->ptr = game::hks::Hashtable_Create(state, 0, 0);
         this->add();
     }
@@ -189,12 +189,12 @@ namespace ui_scripting
         value.v.table = this->ptr;
         value.t = game::hks::TTABLE;
 
-        const auto state = *game::hks::lua_state;
+        const auto state = *game::hks::lui_lua_state;
         const auto top = state->m_apistack.top;
 
         push_value(value);
 
-        this->ref = game::hks::hksi_luaL_ref(*game::hks::lua_state, -10000);
+        this->ref = game::hks::hksi_luaL_ref(*game::hks::lui_lua_state, -10000);
         state->m_apistack.top = top;
     }
 
@@ -202,7 +202,7 @@ namespace ui_scripting
     {
         if (this->ref)
         {
-            game::hks::hksi_luaL_unref(*game::hks::lua_state, -10000, this->ref);
+            game::hks::hksi_luaL_unref(*game::hks::lui_lua_state, -10000, this->ref);
         }
     }
 
@@ -320,12 +320,12 @@ namespace ui_scripting
         value.v.cClosure = this->ptr;
         value.t = this->type;
 
-        const auto state = *game::hks::lua_state;
+        const auto state = *game::hks::lui_lua_state;
         const auto top = state->m_apistack.top;
 
         push_value(value);
 
-        this->ref = game::hks::hksi_luaL_ref(*game::hks::lua_state, static_cast<int64_t>(-10000));
+        this->ref = game::hks::hksi_luaL_ref(*game::hks::lui_lua_state, static_cast<int64_t>(-10000));
         state->m_apistack.top = top;
     }
 
@@ -333,7 +333,7 @@ namespace ui_scripting
     {
         if (this->ref)
         {
-            game::hks::hksi_luaL_unref(*game::hks::lua_state, -10000, this->ref);
+            game::hks::hksi_luaL_unref(*game::hks::lui_lua_state, -10000, this->ref);
         }
     }
 

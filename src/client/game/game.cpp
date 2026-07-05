@@ -249,7 +249,7 @@ namespace game
 	{
 		cclosure* cclosure_Create(lua_function func)
 		{
-			const auto state = *game::hks::lua_state;
+			const auto state = *game::hks::lui_lua_state;
 
 			game::hks::hksi_lua_pushcclosure(state, func, 0, nullptr, 0, 0);
 
