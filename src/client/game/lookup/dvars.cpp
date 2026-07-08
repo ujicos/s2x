@@ -12,6 +12,9 @@ namespace game::lookup::dvars
 			static const detail::string_map values
 			{
 				{ "cl_paused", "183" },
+				{ "net_socksEnabled", "464" },
+				{ "net_socksPassword", "542"},
+				{ "net_noudp", "707" },
 				{ "ui_mapname", "864" },
 				{ "com_sv_running", "1080" },
 				{ "playlistFilename", "1369" },
@@ -28,14 +31,19 @@ namespace game::lookup::dvars
 				{ "onlinegame", "2291" },
 				{ "sv_maxclients", "2299" },
 				{ "fs_basegame", "2796" },
+				{ "bot_AutoConnectDefault", "2806"},
 				{ "fs_ignoreLocalized", "3139" },
 				{ "fs_basepath_output", "3510" },
 				{ "cl_motdString", "3680" },
+				{ "net_socksPort", "3842"},
+				{ "net_socksUsername", "3968"},
 				{ "fs_homepath", "4068" },
 				{ "fs_basepath", "4972" },
+				{ "bot_DifficultyDefault", "5046"},
 				{ "systemlink", "5075" },
 				{ "sv_paused", "5351" },
 				{ "com_completionResolveCommand", "5369" },
+				{ "net_socksServer", "5377"},
 			};
 
 			return values;
@@ -46,6 +54,9 @@ namespace game::lookup::dvars
 			static const detail::string_map values
 			{
 				{ "183", "cl_paused" },
+				{ "464", "net_socksEnabled" },
+				{ "542", "net_socksPassword" },
+				{ "707", "net_noudp" },
 				{ "864", "ui_mapname" },
 				{ "1080", "com_sv_running" },
 				{ "1369", "playlistFilename" },
@@ -62,14 +73,19 @@ namespace game::lookup::dvars
 				{ "2291", "onlinegame" },
 				{ "2299", "sv_maxclients" },
 				{ "2796", "fs_basegame" },
+				{ "2806", "bot_AutoConnectDefault" },
 				{ "3139", "fs_ignoreLocalized" },
 				{ "3510", "fs_basepath_output" },
 				{ "3680", "cl_motdString" },
+				{ "3842", "net_socksPort" },
+				{ "3968", "net_socksUsername" },
 				{ "4068", "fs_homepath" },
 				{ "4972", "fs_basepath" },
+				{ "5046", "bot_DifficultyDefault" },
 				{ "5075", "systemlink" },
 				{ "5351", "sv_paused" },
 				{ "5369", "com_completionResolveCommand" },
+				{ "5377", "net_socksServer" },
 			};
 
 			return values;
